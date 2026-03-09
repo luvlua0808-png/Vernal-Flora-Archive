@@ -1,0 +1,8 @@
+.DS_Store
+.ask_continue_port
+.windsurfrules
+windsurf_deployment.yaml
+node_modules/
+
+# Local Netlify folder
+.netlify
