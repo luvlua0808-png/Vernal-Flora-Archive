@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#F9F8F4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>春天花会开</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- 加载页 -->
+  <div id="loading-screen" class="loading-screen">
+    <div id="loading-hero-svg"></div>
+    <div class="loading-title">春天花会开</div>
+    <div class="loading-sub">识花 · 打卡 · 收藏</div>
+  </div>
+
+  <!-- 弹窗遮罩 -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal-sheet" id="modal-content">
+    </div>
+  </div>
+
+  <!-- ===== 首页 ===== -->
+  <div id="page-home" class="page active">
+
+    <!-- Hero -->
+    <div class="hero-section">
+      <div class="hero-bg-text">春</div>
+      <div class="hero-logo" id="hero-svg-wrap"></div>
+      <h1 class="hero-title">春天花会开</h1>
+      <p class="hero-subtitle">识花 · 打卡 · 收藏</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="startQuiz()">开始识花</button>
+        <button class="btn-secondary" onclick="navigateTo('collection')">查看标本墙</button>
+      </div>
+    </div>
+
+    <!-- 花卉速览 -->
+    <div class="home-intro">
+      <div class="section-divider">
+        <span class="section-label">二十种春花</span>
+      </div>
+
+      <!-- 时期筛选 -->
+      <div class="period-tags">
+        <span class="period-tag early active" data-period="all" style="border-color:var(--border);color:var(--ink-light);background:transparent">全部</span>
+        <span class="period-tag early active" data-period="early">早春</span>
+        <span class="period-tag mid" data-period="mid">仲春</span>
+        <span class="period-tag late" data-period="late">暮春</span>
+      </div>
+
+      <!-- 花卉卡片列表 -->
+      <div class="flower-preview-list" id="flower-preview-list">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== 识别页 ===== -->
+  <div id="page-quiz" class="page">
+
+    <div class="quiz-header">
+      <div class="quiz-header-title">识花向导</div>
+      <div class="quiz-header-sub">根据特征，逐步锁定你遇见的花</div>
+    </div>
+
+    <div class="quiz-body" id="quiz-body">
+      <div class="empty-hint">
+        <div style="font-size:48px;margin-bottom:16px">🌸</div>
+        点击首页「开始识花」开始
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== 标本墙 ===== -->
+  <div id="page-collection" class="page">
+
+    <div class="collection-header">
+      <div>
+        <div class="collection-title">博物标本墙</div>
+        <div class="collection-count">已遇见 <span id="unlocked-count">0</span> / 24 种春花</div>
+      </div>
+      <button class="ach-entry-btn" onclick="openAchievementsPanel()">
+        <span>🏆</span><span>成就</span>
+      </button>
+    </div>
+
+    <!-- 时期筛选 -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setCollectionFilter('all')">全部</button>
+      <button class="filter-btn" data-filter="early" onclick="setCollectionFilter('early')">早春</button>
+      <button class="filter-btn" data-filter="mid" onclick="setCollectionFilter('mid')">仲春</button>
+      <button class="filter-btn" data-filter="late" onclick="setCollectionFilter('late')">暮春</button>
+    </div>
+
+    <!-- 标本格子墙 -->
+    <div class="collection-grid" id="collection-grid">
+    </div>
+
+    <!-- PPBC 鸣谢 -->
+    <div class="ppbc-credit">
+      <div class="ppbc-credit-text">
+        花卉图片来自 <a href="https://ppbc.iplant.cn" target="_blank" rel="noopener">中国植物图像库 PPBC</a>
+      </div>
+      <div class="ppbc-credit-authors">
+        图片捐献者：李光敏、朱鑫鑫、宋鼎、薛凯、赵宏、周繇、刘军、徐晔春、刘冰 等
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== 底部导航 ===== -->
+  <nav class="nav-bar">
+    <button class="nav-item active" data-page="home">
+      <span class="nav-icon">🌿</span>
+      <span class="nav-label">首页</span>
+    </button>
+    <button class="nav-item" data-page="quiz">
+      <span class="nav-icon">🔍</span>
+      <span class="nav-label">识花</span>
+    </button>
+    <button class="nav-item" data-page="collection">
+      <span class="nav-icon">🗂</span>
+      <span class="nav-label">标本墙</span>
+    </button>
+  </nav>
+
+  <script src="data/flowers.js"></script>
+  <script src="data/quiz.js"></script>
+  <script src="data/achievements.js"></script>
+  <script src="js/svgs.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // 加载页 hero SVG
+    document.getElementById('loading-hero-svg').innerHTML = createHeroSVG(true);
+  </script>
+
+</body>
+</html>
