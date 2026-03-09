@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>春天花会开 · 产品介绍</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #2C2416;
+      --ink-light: #6B5A45;
+      --ink-faint: #A89880;
+      --accent:    #C0392B;
+      --gold:      #C8A84B;
+      --bg:        #FAF7F2;
+      --border:    rgba(180,165,140,0.2);
+      --serif:     'Noto Serif SC', serif;
+      --sans:      'Noto Sans SC', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,183,197,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(253,233,200,0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      font-family: var(--serif);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(40px, 10vw, 72px);
+      letter-spacing: 0.25em;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(14px, 3vw, 18px);
+      color: var(--ink-light);
+      letter-spacing: 0.15em;
+      font-family: var(--serif);
+      font-weight: 300;
+      margin-bottom: 48px;
+      max-width: 480px;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary-land {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: var(--ink);
+      color: var(--bg);
+      border-radius: 2px;
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      transition: opacity 200ms;
+    }
+    .btn-primary-land:hover { opacity: 0.8; }
+
+    .btn-ghost-land {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border: 0.5px solid rgba(44,36,22,0.3);
+      color: var(--ink-light);
+      border-radius: 2px;
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      transition: border-color 200ms, color 200ms;
+    }
+    .btn-ghost-land:hover { border-color: var(--ink); color: var(--ink); }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: var(--ink-faint);
+      font-family: var(--serif);
+      animation: scrollBob 2s ease-in-out infinite;
+    }
+    @keyframes scrollBob {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+      50%       { transform: translateX(-50%) translateY(6px); opacity: 1; }
+    }
+
+    /* ── MOCKUP ── */
+    .mockup-section {
+      padding: 80px 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-frame {
+      width: min(320px, 80vw);
+      aspect-ratio: 9/19;
+      background: #1A1612;
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow:
+        0 40px 100px rgba(44,36,22,0.22),
+        0 8px 24px rgba(44,36,22,0.14),
+        inset 0 0 0 1px rgba(255,255,255,0.06);
+      position: relative;
+    }
+
+    .phone-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      overflow: hidden;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .phone-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 8px;
+      width: 100%;
+    }
+
+    .phone-card {
+      aspect-ratio: 3/4;
+      border-radius: 4px;
+      background: #EDE8E0;
+      overflow: hidden;
+      position: relative;
+      border: 0.5px solid rgba(180,165,140,0.3);
+    }
+
+    .phone-card-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      height: 20%;
+      background: rgba(255,255,255,0.82);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6px;
+      color: #6B5A45;
+      letter-spacing: 0.1em;
+      font-family: var(--serif);
+    }
+
+    .phone-card-color {
+      width: 100%;
+      height: 80%;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 40px;
+      margin: 8px 0;
+      opacity: 0.3;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 0.5px;
+      background: var(--ink);
+    }
+    .divider-text {
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      color: var(--ink);
+      font-family: var(--serif);
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 80px 24px 60px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      font-family: var(--serif);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(24px, 6vw, 36px);
+      letter-spacing: 0.2em;
+      color: var(--ink);
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 32px;
+    }
+
+    .feature-card {
+      padding: 28px 24px;
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.5);
+      transition: box-shadow 200ms, transform 200ms;
+    }
+    .feature-card:hover {
+      box-shadow: 0 8px 32px rgba(44,36,22,0.08);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--gold);
+      margin-bottom: 14px;
+      letter-spacing: 0.05em;
+    }
+
+    .feature-title {
+      font-family: var(--serif);
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--ink-faint);
+      line-height: 1.9;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── FLOWER LIST PREVIEW ── */
+    .flowers-preview {
+      padding: 60px 24px 80px;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .flowers-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 36px;
+    }
+
+    .flower-tag {
+      padding: 6px 16px;
+      border: 0.5px solid rgba(180,165,140,0.4);
+      border-radius: 20px;
+      font-family: var(--serif);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: var(--ink-light);
+      background: rgba(255,255,255,0.6);
+      transition: border-color 200ms, color 200ms;
+    }
+    .flower-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    .flower-tag.highlight {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── QUOTE ── */
+    .quote-section {
+      padding: 80px 32px;
+      text-align: center;
+      position: relative;
+    }
+
+    .quote-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,168,75,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .quote-mark {
+      font-family: var(--serif);
+      font-size: 60px;
+      color: var(--gold);
+      opacity: 0.25;
+      line-height: 1;
+      margin-bottom: -16px;
+    }
+
+    .quote-text {
+      font-family: var(--serif);
+      font-size: clamp(18px, 4vw, 26px);
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--ink);
+      line-height: 1.8;
+      max-width: 560px;
+      margin: 0 auto 16px;
+    }
+
+    .quote-source {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--ink-faint);
+      font-family: var(--serif);
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      padding: 60px 24px 80px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 40px;
+    }
+
+    .step {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      padding: 28px 0;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-num {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--gold);
+      opacity: 0.5;
+      flex-shrink: 0;
+      width: 48px;
+      line-height: 1;
+      padding-top: 4px;
+    }
+
+    .step-content { min-width: 0; }
+
+    .step-title {
+      font-family: var(--serif);
+      font-size: 16px;
+      letter-spacing: 0.15em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: var(--ink-faint);
+      line-height: 1.9;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── FOOTER CTA ── */
+    .footer-cta {
+      padding: 80px 24px 40px;
+      text-align: center;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .footer-cta-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(22px, 5vw, 32px);
+      letter-spacing: 0.25em;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .footer-cta-sub {
+      font-size: 13px;
+      color: var(--ink-faint);
+      letter-spacing: 0.1em;
+      margin-bottom: 36px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 24px;
+      text-align: center;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .footer-text {
+      font-size: 11px;
+      color: var(--ink-faint);
+      letter-spacing: 0.2em;
+      font-family: var(--serif);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .hero-cta-group { flex-direction: column; align-items: center; }
+      .btn-primary-land, .btn-ghost-land { width: 100%; max-width: 280px; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-eyebrow">A pocket botanist's field journal</div>
+    <h1 class="hero-title">春天花会开</h1>
+    <p class="hero-subtitle">二十四种春花，一册博物标本志<br>识花 · 打卡 · 记录与春天的每一次相遇</p>
+    <div class="hero-cta-group">
+      <a href="index.html" class="btn-primary-land">开始探索 →</a>
+      <a href="https://github.com/luvlua0808-png/Vernal-Flora-Archive" target="_blank" class="btn-ghost-land">GitHub</a>
+    </div>
+    <div class="hero-scroll-hint">向下滚动</div>
+  </section>
+
+  <!-- ── MOCKUP ── -->
+  <section class="mockup-section">
+    <div class="phone-frame">
+      <div class="phone-inner">
+        <div class="phone-grid">
+          <div class="phone-card"><div class="phone-card-color" style="background:linear-gradient(135deg,#FDE8D0,#F4B8C8)"></div><div class="phone-card-bar">迎春花</div></div>
+          <div class="phone-card"><div class="phone-card-color" style="background:linear-gradient(135deg,#F5E6D8,#E8C4C4)"></div><div class="phone-card-bar">梅花</div></div>
+          <div class="phone-card"><div class="phone-card-color" style="background:linear-gradient(135deg,#F8F0E8,#EAD8CC)"></div><div class="phone-card-bar">玉兰</div></div>
+          <div class="phone-card"><div class="phone-card-color" style="background:linear-gradient(135deg,#E8D4E8,#C8A8D0)"></div><div class="phone-card-bar">紫玉兰</div></div>
+          <div class="phone-card"><div class="phone-card-color" style="background:linear-gradient(135deg,#FFD0DC,#F4A8B8)"></div><div class="phone-card-bar">樱花</div></div>
+          <div class="phone-card"><div class="phone-card-color" style="background:linear-gradient(135deg,#FFB0C8,#E88090)"></div><div class="phone-card-bar">垂丝海棠</div></div>
+        </div>
+        <div style="font-size:8px;color:#A89880;letter-spacing:0.2em;font-family:'Noto Serif SC',serif;padding-bottom:8px">春天标本墙</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span class="divider-text">功能介绍</span></div>
+
+  <!-- ── FEATURES ── -->
+  <section class="features">
+    <div class="section-eyebrow">Features</div>
+    <h2 class="section-title">一册博物志的全部心意</h2>
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">识</div>
+        <div class="feature-title">智能识花向导</div>
+        <div class="feature-desc">通过花色、花型、叶形等特征逐步引导，精准识别二十四种春花，附别称由来与近似辨析。</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">记</div>
+        <div class="feature-title">博物标本墙</div>
+        <div class="feature-desc">每次打卡即刻解锁花卉标本，水墨晕染动效见证相遇瞬间，复古印章盖下春事已记。</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">志</div>
+        <div class="feature-title">花卉详情册</div>
+        <div class="feature-desc">每种花附有印象志、物候产地、诗歌典故、别称由来，如翻阅一册手工装订的植物图鉴。</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">录</div>
+        <div class="feature-title">春事录成就系统</div>
+        <div class="feature-desc">「一花知春」「二十四番花信风」等物候成就，书签从顶部缓缓落下，风铃声轻响。</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">候</div>
+        <div class="feature-title">物候时令筛选</div>
+        <div class="feature-desc">按早春、仲春、暮春三个时令筛选，顺应节气节律，感知春天的流转与更迭。</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">藏</div>
+        <div class="feature-title">无需账号离线可用</div>
+        <div class="feature-desc">所有打卡记录存储在本地，无需注册登录，打开即用，春天不需要云端才能留存。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"><span class="divider-text">收录花卉</span></div>
+
+  <!-- ── FLOWERS PREVIEW ── -->
+  <section class="flowers-preview">
+    <div class="section-eyebrow">24 Species</div>
+    <h2 class="section-title">二十四种春花</h2>
+    <div class="flowers-tags">
+      <span class="flower-tag">迎春花</span>
+      <span class="flower-tag">梅花</span>
+      <span class="flower-tag">玉兰</span>
+      <span class="flower-tag">紫玉兰</span>
+      <span class="flower-tag">樱花</span>
+      <span class="flower-tag highlight">垂丝海棠 · 看板花</span>
+      <span class="flower-tag">西府海棠</span>
+      <span class="flower-tag">碧桃</span>
+      <span class="flower-tag">山桃花</span>
+      <span class="flower-tag">连翘</span>
+      <span class="flower-tag">紫叶李</span>
+      <span class="flower-tag">木瓜海棠</span>
+      <span class="flower-tag">紫荆</span>
+      <span class="flower-tag">木莲</span>
+      <span class="flower-tag">二乔玉兰</span>
+      <span class="flower-tag">郁金香</span>
+      <span class="flower-tag">丁香</span>
+      <span class="flower-tag">牡丹</span>
+      <span class="flower-tag">芍药</span>
+      <span class="flower-tag">蔷薇</span>
+      <span class="flower-tag">梨花</span>
+      <span class="flower-tag">李花</span>
+      <span class="flower-tag">杏花</span>
+      <span class="flower-tag">含笑花</span>
+    </div>
+  </section>
+
+  <!-- ── QUOTE ── -->
+  <section class="quote-section">
+    <div class="quote-mark">"</div>
+    <p class="quote-text">春风又绿江南岸，<br>不如归去认春花</p>
+    <div class="quote-source">— 设计初衷</div>
+  </section>
+
+  <div class="divider"><span class="divider-text">使用方式</span></div>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section class="how-section">
+    <div class="section-eyebrow">How to use</div>
+    <h2 class="section-title">三步入春</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">一</div>
+        <div class="step-content">
+          <div class="step-title">遇见一朵花</div>
+          <div class="step-desc">打开识花向导，根据提示选择花色、形态特征，逐步缩小范围，找到眼前这朵花的名字。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">二</div>
+        <div class="step-content">
+          <div class="step-title">打卡，春事已记</div>
+          <div class="step-desc">确认识别后点击打卡，水墨晕染从卡片中心扩散，风铃三声，这次相遇已入册。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">三</div>
+        <div class="step-content">
+          <div class="step-title">翻阅你的标本墙</div>
+          <div class="step-desc">已解锁的花卉彩色显示，未遇见的静静等待。集齐二十四种，完成属于你的春日博物志。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER CTA ── -->
+  <section class="footer-cta">
+    <div class="footer-cta-title">开始你的春日博物志</div>
+    <div class="footer-cta-sub">无需下载 · 即开即用 · 纯静态网页</div>
+    <div class="hero-cta-group" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="index.html" class="btn-primary-land">进入应用 →</a>
+      <a href="https://github.com/luvlua0808-png/Vernal-Flora-Archive" target="_blank" class="btn-ghost-land">查看源码</a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-text">春天花会开 · Made with care by luvlua · 花卉图片来自 PPBC 中国植物图像库</div>
+  </footer>
+
+</body>
+</html>
