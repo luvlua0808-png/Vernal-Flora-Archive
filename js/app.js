@@ -1,3 +1,11 @@
+// ===== ANALYTICS (Umami) =====
+function track(event, props) {
+  if (typeof umami === 'undefined') return;
+  try {
+    umami.track(event, props);
+  } catch(e) {}
+}
+
 // ===== STATE =====
 const STATE = {
   currentPage: 'home',
@@ -154,6 +162,7 @@ function showAchievementToast(ach) {
 }
 
 function openAchievementsPanel() {
+  track('achievements_open', { unlocked_count: Object.keys(loadAchievements()).length });
   if (typeof ACHIEVEMENTS === 'undefined') return;
   const overlay = document.getElementById('modal-overlay');
   const content = document.getElementById('modal-content');
@@ -208,6 +217,7 @@ function openAchievementsPanel() {
 
 // ===== NAVIGATION =====
 function navigateTo(page) {
+  track('page_view', { page });
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
@@ -266,6 +276,7 @@ function renderHomeFlowerList(period = 'all') {
 
 // ===== QUIZ =====
 function startQuiz() {
+  track('quiz_start');
   STATE.quizHistory = [];
   STATE.quizCurrentNode = QUIZ_TREE;
   STATE.quizStep = 0;
@@ -342,6 +353,7 @@ function quizGoBack() {
 function renderQuizResult(flowerId) {
   const flower = findFlowerById(flowerId);
   if (!flower) return;
+  track('quiz_result', { flower_id: flowerId, flower_name: flower.name, period: flower.period });
 
   const body = document.getElementById('quiz-body');
   const alreadyUnlocked = isUnlocked(flower.id);
@@ -383,8 +395,11 @@ function renderQuizResult(flowerId) {
 function checkInFlower(id) {
   const btn = document.getElementById('checkin-btn');
   const isNew = unlockFlower(id);
-
-  if (isNew) playChime();
+  const flower = FLOWERS_DATA.find(f => f.id === id);
+  if (isNew) {
+    playChime();
+    track('flower_checkin', { flower_id: id, flower_name: flower?.name, period: flower?.period, total: getUnlockedCount() });
+  }
 
   if (btn) {
     btn.classList.add('checked');
@@ -446,6 +461,7 @@ function renderCollection() {
 }
 
 function setCollectionFilter(filter) {
+  track('collection_filter', { filter });
   STATE.collectionFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.filter === filter);
@@ -519,6 +535,7 @@ function openFlowerDetail(id) {
 function openSpecimenDetail(id) {
   const flower = findFlowerById(id);
   if (!flower) return;
+  track('flower_detail_view', { flower_id: id, flower_name: flower.name, unlocked: isUnlocked(id) });
   const sourceEl = document.querySelector(`.specimen-cell[data-id="${id}"]`);
   if (sourceEl) {
     playFlipTransition(sourceEl, () => openModal(flower));
@@ -669,6 +686,7 @@ function checkInFromModal(id) {
   const isNew = unlockFlower(id);
   const flower = findFlowerById(id);
   showToast(isNew ? `${flower?.name} 已加入标本墙` : '已在标本墙中');
+  if (isNew && flower) track('flower_checkin', { flower_id: id, flower_name: flower.name, period: flower.period, total: getUnlockedCount(), source: 'modal' });
   if (flower) openModal(flower);
   // 解锁时在标本卡上播放水墨晕染
   if (isNew && flower) {
