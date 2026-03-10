@@ -64,40 +64,34 @@
       </div>
     </div>
 
-    <!-- 花卉速览 -->
-    <div class="home-intro">
-      <div class="section-divider">
-        <span class="section-label">二十种春花</span>
-      </div>
-
-      <!-- 时期筛选 -->
-      <div class="period-tags">
-        <span class="period-tag early active" data-period="all" style="border-color:var(--border);color:var(--ink-light);background:transparent">全部</span>
-        <span class="period-tag early active" data-period="early">早春</span>
-        <span class="period-tag mid" data-period="mid">仲春</span>
-        <span class="period-tag late" data-period="late">暮春</span>
-      </div>
-
-      <!-- 花卉卡片列表 -->
-      <div class="flower-preview-list" id="flower-preview-list">
-      </div>
-    </div>
 
   </div>
 
   <!-- ===== 识别页 ===== -->
   <div id="page-quiz" class="page">
 
-    <div class="quiz-header">
-      <div class="quiz-header-title">识花向导</div>
-      <div class="quiz-header-sub">根据特征，逐步锁定你遇见的花</div>
+    <!-- 物候日历面板 -->
+    <div id="panel-calendar" class="quiz-panel">
+      <!-- 月份轴 -->
+      <div class="calendar-month-bar" id="calendar-month-bar">
+        <button class="cal-month-btn active" data-month="2">2月</button>
+        <button class="cal-month-btn" data-month="3">3月</button>
+        <button class="cal-month-btn" data-month="4">4月</button>
+        <button class="cal-month-btn" data-month="5">5月</button>
+      </div>
+      <!-- 节气提示 -->
+      <div class="calendar-season-hint" id="calendar-season-hint"></div>
+      <!-- 花卉卡片网格 -->
+      <div class="calendar-flower-grid" id="calendar-flower-grid"></div>
     </div>
 
-    <div class="quiz-body" id="quiz-body">
-      <div class="empty-hint">
-        <div style="font-size:48px;margin-bottom:16px">🌸</div>
-        点击首页「开始识花」开始
+    <!-- 识花向导面板（从首页「开始识花」唤起） -->
+    <div id="panel-guide" class="quiz-panel" style="display:none">
+      <div class="quiz-header">
+        <div class="quiz-header-title">识花向导</div>
+        <div class="quiz-header-sub">根据特征，逐步锁定你遇见的花</div>
       </div>
+      <div class="quiz-body" id="quiz-body"></div>
     </div>
 
   </div>
@@ -153,8 +147,8 @@
       <span class="nav-label">首页</span>
     </button>
     <button class="nav-item" data-page="quiz">
-      <span class="nav-icon">🔍</span>
-      <span class="nav-label">识花</span>
+      <span class="nav-icon">🌸</span>
+      <span class="nav-label">物候日历</span>
     </button>
     <button class="nav-item" data-page="collection">
       <span class="nav-icon">🗂</span>

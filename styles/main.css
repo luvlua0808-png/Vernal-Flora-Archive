@@ -1545,3 +1545,150 @@ body::before {
 .ach-entry-btn:active {
   background: var(--border);
 }
+
+/* ===== 识花页子 TAB ===== */
+.quiz-sub-tabs {
+  display: flex;
+  gap: 0;
+  padding: 12px 20px 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.quiz-sub-tab {
+  flex: 1;
+  padding: 9px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+  color: var(--ink-faint);
+  letter-spacing: 0.12em;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  transition: color 200ms, border-color 200ms;
+}
+
+.quiz-sub-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.quiz-panel {
+  padding: 0;
+}
+
+/* ===== 物候日历 ===== */
+.calendar-month-bar {
+  display: flex;
+  gap: 8px;
+  padding: 14px 20px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.calendar-month-bar::-webkit-scrollbar { display: none; }
+
+.cal-month-btn {
+  flex-shrink: 0;
+  padding: 6px 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  font-size: 13px;
+  color: var(--ink-light);
+  letter-spacing: 0.1em;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  transition: all 220ms ease;
+}
+
+.cal-month-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.calendar-season-hint {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 20px 12px;
+}
+
+.cal-solar-term {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  font-family: 'Noto Serif SC', serif;
+  flex-shrink: 0;
+}
+
+.cal-season-desc {
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
+.calendar-flower-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 14px 24px;
+}
+
+.cal-flower-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cal-flower-card:active {
+  transform: scale(0.96);
+}
+
+.cal-flower-svg {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-flower-name {
+  font-size: 12px;
+  color: var(--ink);
+  letter-spacing: 0.1em;
+  font-family: 'Noto Serif SC', serif;
+  text-align: center;
+}
+
+.cal-flower-period {
+  font-size: 10px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.cal-flower-stamp {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  opacity: 0.82;
+  pointer-events: none;
+  animation: stampIn 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}

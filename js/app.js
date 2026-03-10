@@ -228,48 +228,13 @@ function navigateTo(page) {
   STATE.currentPage = page;
 
   if (page === 'collection') renderCollection();
-  if (page === 'home') renderHomeFlowerList();
+  if (page === 'quiz') initCalendar();
 }
 
 // ===== HOME PAGE =====
 function renderHomePage() {
   const heroWrap = document.getElementById('hero-svg-wrap');
   if (heroWrap) heroWrap.innerHTML = '<img src="icons/icon-logo.png" alt="春天花会开" class="hero-logo-img">';
-
-  renderHomeFlowerList();
-}
-
-function renderHomeFlowerList(period = 'all') {
-  const container = document.getElementById('flower-preview-list');
-  if (!container) return;
-
-  let flowers = FLOWERS_DATA;
-  if (period !== 'all') {
-    const periodMap = { early: '早春', mid: '仲春', late: '暮春' };
-    flowers = FLOWERS_DATA.filter(f => f.period === periodMap[period]);
-  }
-
-  container.innerHTML = flowers.map(f => {
-    const unlocked = isUnlocked(f.id);
-    return `
-      <div class="flower-preview-card ${unlocked ? 'flower-preview-unlocked' : 'flower-preview-locked'}"
-           style="--flower-color: ${f.colorHex}"
-           onclick="openFlowerDetail(${f.id})">
-        <div class="flower-preview-name">${f.name}${f.isHero ? ' ✦' : ''}</div>
-        <div class="flower-preview-period">
-          <span class="flower-preview-dot" style="background:${f.colorHex}"></span>
-          ${f.period}
-          ${unlocked ? `<span style="color:var(--accent);font-size:10px;margin-left:4px">· 已遇见</span>` : ''}
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Period tag active state
-  document.querySelectorAll('.period-tag').forEach(tag => {
-    const tp = tag.dataset.period;
-    tag.classList.toggle('active', tp === period || (tp === 'all' && period === 'all'));
-  });
 }
 
 // ===== QUIZ =====
@@ -279,6 +244,7 @@ function startQuiz() {
   STATE.quizStep = 0;
   STATE.quizResult = null;
   navigateTo('quiz');
+  switchQuizTab('guide');
   renderQuizQuestion();
 }
 
@@ -417,6 +383,107 @@ function checkInFlower(id) {
       setTimeout(() => openSpecimenDetail(id), 300);
     }, 900);
   }
+}
+
+// ===== PHENOLOGY CALENDAR =====
+// 每朵花的盛花月份（手动标注，基于 blooming_period 字段）
+const FLOWER_MONTHS = {
+  1:  [2, 3, 4],       // 迎春花
+  2:  [1, 2, 3],       // 梅花
+  3:  [2, 3],          // 玉兰
+  4:  [3, 4],          // 紫玉兰
+  5:  [3, 4],          // 樱花
+  6:  [3, 4],          // 垂丝海棠
+  7:  [4],             // 西府海棠
+  8:  [3, 4],          // 碧桃
+  9:  [2, 3],          // 山桃花
+  10: [3, 4],          // 连翘
+  11: [3, 4],          // 紫叶李
+  12: [3, 4],          // 木瓜海棠
+  13: [3, 4],          // 紫荆
+  14: [4, 5],          // 木莲
+  15: [3, 4],          // 二乔玉兰
+  16: [3, 4, 5],       // 郁金香
+  17: [4, 5],          // 丁香
+  18: [4, 5],          // 牡丹
+  19: [4, 5],          // 芍药
+  20: [4, 5, 6],       // 蔷薇
+  21: [3, 4],          // 梨花
+  22: [3],             // 李花
+  23: [3],             // 杏花
+  24: [3, 4, 5],       // 含笑花
+};
+
+const SEASON_HINTS = {
+  2: { solar: '雨水 · 惊蛰', desc: '大地回春，早花争先，迎春梅花率先绽放' },
+  3: { solar: '春分 · 清明', desc: '桃李争艳，百花齐放，是一年中最繁盛的时节' },
+  4: { solar: '谷雨', desc: '谷雨三朝看牡丹，海棠丁香相继开放' },
+  5: { solar: '立夏', desc: '春尽夏来，芍药蔷薇是春天最后的告别' },
+};
+
+let calendarActiveMonth = new Date().getMonth() + 1;
+if (calendarActiveMonth < 2) calendarActiveMonth = 2;
+if (calendarActiveMonth > 5) calendarActiveMonth = 5;
+
+function initCalendar() {
+  const bar = document.getElementById('calendar-month-bar');
+  if (!bar) return;
+
+  bar.querySelectorAll('.cal-month-btn').forEach(btn => {
+    const m = parseInt(btn.dataset.month);
+    btn.classList.toggle('active', m === calendarActiveMonth);
+    btn.onclick = () => {
+      calendarActiveMonth = m;
+      bar.querySelectorAll('.cal-month-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCalendarGrid(m);
+    };
+  });
+
+  renderCalendarGrid(calendarActiveMonth);
+}
+
+function renderCalendarGrid(month) {
+  const grid = document.getElementById('calendar-flower-grid');
+  const hint = document.getElementById('calendar-season-hint');
+  if (!grid) return;
+
+  const sh = SEASON_HINTS[month] || {};
+  if (hint) {
+    hint.innerHTML = `<span class="cal-solar-term">${sh.solar || ''}</span><span class="cal-season-desc">${sh.desc || ''}</span>`;
+  }
+
+  const flowers = FLOWERS_DATA.filter(f => (FLOWER_MONTHS[f.id] || []).includes(month));
+
+  grid.innerHTML = flowers.map(f => {
+    const unlocked = isUnlocked(f.id);
+    return `
+      <div class="cal-flower-card" onclick="openSpecimenDetail(${f.id})">
+        <div class="cal-flower-svg" style="--cal-color:${f.colorHex}">
+          ${createFlowerSVG(f, 52, unlocked)}
+        </div>
+        <div class="cal-flower-name">${f.name}</div>
+        <div class="cal-flower-period">${f.blooming_period ? f.blooming_period.split('，')[0].split('（')[0] : ''}</div>
+        ${unlocked ? `
+          <div class="cal-flower-stamp">
+            <svg viewBox="0 0 36 36" width="36" height="36">
+              <circle cx="18" cy="18" r="16" fill="none" stroke="${f.colorHex}" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+              <circle cx="18" cy="18" r="11" fill="none" stroke="${f.colorHex}" stroke-width="0.8" opacity="0.5"/>
+              <text x="18" y="22" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="10" fill="${f.colorHex}" opacity="0.9">遇见</text>
+            </svg>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function switchQuizTab(tab) {
+  const cal = document.getElementById('panel-calendar');
+  const guide = document.getElementById('panel-guide');
+  if (cal) cal.style.display = tab === 'calendar' ? '' : 'none';
+  if (guide) guide.style.display = tab === 'guide' ? '' : 'none';
+  if (tab === 'calendar') initCalendar();
 }
 
 // ===== COLLECTION WALL =====
