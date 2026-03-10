@@ -589,7 +589,7 @@ function renderCollection() {
           <img
             class="specimen-photo"
             src="images/flower_${f.id}.jpg"
-            onerror="this.src='${f.imageUrl || ''}';this.onerror=function(){this.style.display='none'}"
+            onerror="this.style.display='none'"
             alt="${f.name}"
             loading="lazy"
             style="width:100%;height:100%;object-fit:cover;display:block;"
@@ -714,7 +714,7 @@ function openModal(flower) {
       <img
         class="modal-hero-photo ${unlocked ? '' : 'modal-hero-photo--locked'}"
         src="images/flower_${flower.id}.jpg"
-        onerror="this.src='${flower.imageUrl || ''}';this.onerror=function(){this.style.display='none'}"
+        onerror="this.style.display='none'"
         alt="${flower.name}"
         loading="lazy"
       />
@@ -935,13 +935,7 @@ function loadSharePhoto(flowerId, customDataUrl) {
 
   const localImg = new Image();
   localImg.onload = () => draw(localImg);
-  localImg.onerror = () => {
-    const netImg = new Image();
-    netImg.crossOrigin = 'anonymous';
-    netImg.onload = () => draw(netImg);
-    netImg.onerror = () => draw(null);
-    netImg.src = flower.imageUrl || '';
-  };
+  localImg.onerror = () => draw(null);
   localImg.src = `images/flower_${flower.id}.jpg`;
 }
 
