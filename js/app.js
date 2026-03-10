@@ -801,9 +801,9 @@ function openShareCard(flowerId) {
       <div class="share-card-footer-actions">
         <label class="share-replace-link">
           <input type="file" accept="image/*" id="share-photo-input" style="display:none" onchange="replaceSharePhoto(${flowerId}, this)">
-          替换本地照片
+          ⊙ 替换照片
         </label>
-        <button class="share-save-link" onclick="downloadShareCard()">保存到相册</button>
+        <button class="share-save-link" onclick="downloadShareCard()">⊡ 保存卡片</button>
       </div>
     </div>
   `;
@@ -869,7 +869,7 @@ function loadSharePhoto(flowerId, customDataUrl) {
   localImg.src = `images/flower_${flower.id}.jpg`;
 }
 
-// ── 极简·艺廊 终极版 ─────────────────────────────────
+// ── Kinfolk 人文画报风格 ──────────────────────────────
 function drawStyleA(flower, photoImg) {
   const canvas = document.getElementById('share-canvas');
   if (!canvas) return;
@@ -877,250 +877,206 @@ function drawStyleA(flower, photoImg) {
   const W = 800, H = 1120;
   const date = getUnlockDate(flower.id);
   const bp = flower.blooming_period ? flower.blooming_period.split('，')[0].split('（')[0] : '';
-  const BG = '#F9F8F4';
+  const BG = '#FDFCFB';
 
-  // ── 背景：古董宣纸色 ───────────────────────────
+  // ── 背景 ──────────────────────────────────────
   ctx.fillStyle = BG;
   ctx.fillRect(0, 0, W, H);
 
-  // 极淡花色光晕（右上角）
-  const glow = ctx.createRadialGradient(W, 0, 0, W, 0, W * 1.1);
-  glow.addColorStop(0, hexToRgbaString(flower.colorHex, 0.06));
-  glow.addColorStop(1, 'rgba(249,248,244,0)');
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, W, H);
-
-  // ── 顶部极细页眉 ──────────────────────────────
-  ctx.fillStyle = '#C8C3BC';
-  ctx.font = '300 10px monospace';
+  // ── 页眉（SPRING FIELD NOTES / No.xx）──────────
+  const HEADER_H = 60;
+  ctx.fillStyle = '#AAAAAA';
+  ctx.font = '400 11px monospace';
+  ctx.letterSpacing = '0.18em';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillText('SPRING  FIELD  NOTES', 64, 38);
+  ctx.fillText('SPRING FIELD NOTES', 56, HEADER_H / 2);
   ctx.textAlign = 'right';
-  ctx.fillText(`No. ${String(flower.id).padStart(2,'0')}`, W - 64, 38);
-  // 页眉细线
-  ctx.strokeStyle = 'rgba(180,172,162,0.3)';
-  ctx.lineWidth = 0.5;
+  ctx.fillText(`No. ${String(flower.id).padStart(2,'0')}`, W - 56, HEADER_H / 2);
+  ctx.letterSpacing = '0';
+  // 页眉底线
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(64, 52); ctx.lineTo(W - 64, 52);
+  ctx.moveTo(0, HEADER_H); ctx.lineTo(W, HEADER_H);
   ctx.stroke();
 
-  // ── 花卉图片（100% 通栏，底部 mask 消隐，无左右边距）──
-  const PW = W, PH = Math.round(W * 0.72);
-  const px = 0, py = 52;
+  // ── 图片区（4:5 比例，通栏，底部渐隐）────────────
+  const IMG_Y = HEADER_H;
+  const IMG_W = W;
+  const IMG_H = Math.round(W * 1.0); // 4:5 => 800*1 px 太高，用0.78模拟视觉4:5
+  // 4:5 实际 = 800/4*5 = 1000，稍压缩避免太长
+  const IMG_H_ACTUAL = Math.round(W * 0.82);
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
 
   if (photoImg) {
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-
     ctx.save();
-    ctx.beginPath();
-    ctx.rect(px, py, PW, PH);
+    ctx.rect(0, IMG_Y, IMG_W, IMG_H_ACTUAL);
     ctx.clip();
-    // cover 模式：保持原始宽高比，不拉伸
-    const sc = Math.max(PW / photoImg.width, PH / photoImg.height);
+    const sc = Math.max(IMG_W / photoImg.width, IMG_H_ACTUAL / photoImg.height);
     const dw = photoImg.width * sc, dh = photoImg.height * sc;
-    const dx = (PW - dw) / 2, dy = py + (PH - dh) / 2;
-    ctx.drawImage(photoImg, dx, dy, dw, dh);
+    const ddx = (IMG_W - dw) / 2, ddy = IMG_Y + (IMG_H_ACTUAL - dh) / 2;
+    ctx.drawImage(photoImg, ddx, ddy, dw, dh);
     ctx.restore();
-
-    // 底部强力渐隐（消隐高度约 45% 图片高）
-    const fadeH = Math.round(PH * 0.45);
-    const bottomFade = ctx.createLinearGradient(0, py + PH - fadeH, 0, py + PH);
-    bottomFade.addColorStop(0, 'rgba(249,248,244,0)');
-    bottomFade.addColorStop(0.55, 'rgba(249,248,244,0.72)');
-    bottomFade.addColorStop(1, BG);
-    ctx.fillStyle = bottomFade;
-    ctx.fillRect(0, py + PH - fadeH, W, fadeH);
-
-    // 左右侧极淡消隐（保留通栏感）
-    const sideW = 30;
-    [0, W - sideW].forEach(x => {
-      const sg = x === 0
-        ? ctx.createLinearGradient(0, py, sideW, py)
-        : ctx.createLinearGradient(W, py, W - sideW, py);
-      sg.addColorStop(0, 'rgba(249,248,244,0.55)');
-      sg.addColorStop(1, 'rgba(249,248,244,0)');
-      ctx.save();
-      ctx.rect(px, py, PW, PH);
-      ctx.clip();
-      ctx.fillStyle = sg;
-      ctx.fillRect(x, py, sideW, PH);
-      ctx.restore();
-    });
-
-    // 顶部极淡消隐
-    const topFade = ctx.createLinearGradient(0, py, 0, py + 40);
-    topFade.addColorStop(0, 'rgba(249,248,244,0.6)');
-    topFade.addColorStop(1, 'rgba(249,248,244,0)');
-    ctx.save();
-    ctx.rect(0, py, W, 40);
-    ctx.clip();
-    ctx.fillStyle = topFade;
-    ctx.fillRect(0, py, W, 40);
-    ctx.restore();
-
   } else {
-    const cg = ctx.createRadialGradient(W / 2, py + PH / 2, 0, W / 2, py + PH / 2, PH * 0.6);
-    cg.addColorStop(0, hexToRgbaString(flower.colorHex, 0.09));
-    cg.addColorStop(1, 'rgba(249,248,244,0)');
+    // 无图：花色渐变占位
+    const cg = ctx.createRadialGradient(W/2, IMG_Y + IMG_H_ACTUAL/2, 0, W/2, IMG_Y + IMG_H_ACTUAL/2, IMG_H_ACTUAL*0.6);
+    cg.addColorStop(0, hexToRgbaString(flower.colorHex, 0.12));
+    cg.addColorStop(1, 'rgba(253,252,251,0)');
     ctx.fillStyle = cg;
-    ctx.fillRect(0, py, W, PH);
+    ctx.fillRect(0, IMG_Y, IMG_W, IMG_H_ACTUAL);
   }
 
-  // ── 花名向上层叠在图片消隐区，制造层叠感 ────────
-  // 图片底部约 py+PH，花名向上偏移 ~80px（负值层叠）
-  const textBaseY = py + PH - 30;
+  // 底部渐隐（透明→背景色），覆盖图片底部约 42%
+  const FADE_START = IMG_Y + IMG_H_ACTUAL * 0.58;
+  const FADE_END = IMG_Y + IMG_H_ACTUAL;
+  const btmFade = ctx.createLinearGradient(0, FADE_START, 0, FADE_END);
+  btmFade.addColorStop(0, 'rgba(253,252,251,0)');
+  btmFade.addColorStop(0.6, 'rgba(253,252,251,0.82)');
+  btmFade.addColorStop(1, BG);
+  ctx.fillStyle = btmFade;
+  ctx.fillRect(0, FADE_START, W, FADE_END - FADE_START);
 
-  // 花名（极细衬线，字间距 0.3em，右对齐，带轻微底部半透明遮罩防止图字混）
-  // 先画一层极淡底色衬底保证可读
-  ctx.save();
-  const nameBgH = 110;
-  const nameBg = ctx.createLinearGradient(0, textBaseY - nameBgH, 0, textBaseY + 10);
-  nameBg.addColorStop(0, 'rgba(249,248,244,0)');
-  nameBg.addColorStop(1, 'rgba(249,248,244,0.55)');
-  ctx.fillStyle = nameBg;
-  ctx.fillRect(0, textBaseY - nameBgH, W, nameBgH + 10);
-  ctx.restore();
+  // ── 图片区内文字（图右下：大花名；图左下：坐标）────
+  const PHOTO_BOTTOM = IMG_Y + IMG_H_ACTUAL;
 
-  ctx.fillStyle = '#2A2C30';
-  ctx.font = '300 58px "Noto Serif SC", serif';
+  // 右下：大花名（衬线体，字间距0.25em，浮现在渐隐区）
+  ctx.fillStyle = '#1A1A1A';
+  ctx.font = '400 80px "Noto Serif SC", serif';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'alphabetic';
-  const chars = flower.name.split('');
-  const charW = 58 * 0.72, charGap = Math.round(58 * 0.3); // 0.3em 字间距
-  let cx2 = W - 64 + charW / 2;
-  for (let i = chars.length - 1; i >= 0; i--) {
-    ctx.fillText(chars[i], cx2, textBaseY);
-    cx2 -= charW + charGap;
+  // 手动 0.25em 字间距
+  const NC = flower.name.split('');
+  const NFS = 80, NGap = Math.round(NFS * 0.22);
+  let NX = W - 52;
+  for (let i = NC.length - 1; i >= 0; i--) {
+    ctx.fillText(NC[i], NX, PHOTO_BOTTOM - 32);
+    NX -= NFS * 0.74 + NGap;
   }
 
-  // 别名（右对齐）
-  if (flower.alias) {
-    ctx.fillStyle = '#A0998F';
-    ctx.font = '300 19px "Noto Serif SC", serif';
-    ctx.fillText(flower.alias.split('、')[0], W - 64, textBaseY + 34);
-  }
+  // 花名下：时令小标签（右对齐，sans-serif 大写）
+  ctx.fillStyle = '#888888';
+  ctx.font = '400 13px "Noto Serif SC", serif';
+  ctx.letterSpacing = '0.12em';
+  ctx.fillText(flower.period || '', W - 52, PHOTO_BOTTOM - 8);
+  ctx.letterSpacing = '0';
 
-  // 时令·花期
-  const periodColor = { '早春': '#A88018', '仲春': '#904060', '暮春': '#783048' };
-  ctx.fillStyle = periodColor[flower.period] || '#887060';
-  ctx.font = '300 15px "Noto Serif SC", serif';
-  ctx.fillText(`${flower.period}  ·  ${bp}`, W - 64, textBaseY + (flower.alias ? 62 : 40));
-
-  // ── 经纬坐标（左侧，与花名同区） ────────────────
-  const coordY = textBaseY + 30;
-  ctx.fillStyle = '#B8B2AA';
-  ctx.font = '300 12px monospace';
+  // 左下：坐标 + 日期（monospace，图标感小文字）
+  ctx.fillStyle = 'rgba(60,60,60,0.7)';
+  ctx.font = '400 13px monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('31°14′N  121°28′E', 64, coordY);
+  ctx.fillText('⊙ 31°14′N  121°28′E', 52, PHOTO_BOTTOM - 46);
   if (date) {
-    ctx.fillText(date, 64, coordY + 18);
+    ctx.fillText(`⊡ ${date}`, 52, PHOTO_BOTTOM - 26);
   }
 
-  // ── 引文（居中，小字） ─────────────────────────
-  const storyText = flower.story.slice(0, 28) + (flower.story.length > 28 ? '…' : '');
-  ctx.fillStyle = '#B0A898';
-  ctx.font = '300 17px "Noto Serif SC", serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillText(storyText, W / 2, coordY + 54);
+  // ── 白色内容区（图片下方）──────────────────────
+  const CONTENT_Y = PHOTO_BOTTOM + 8;
 
-  // ── 极淡虚线分隔 ──────────────────────────────
-  const divY = coordY + 80;
-  ctx.strokeStyle = 'rgba(180,172,162,0.22)';
-  ctx.lineWidth = 0.5;
-  ctx.setLineDash([2, 12]);
+  // 引文段落（多行自动换行）
+  ctx.fillStyle = '#444444';
+  ctx.font = '300 20px "Noto Serif SC", serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  const storyFull = flower.story || '';
+  const maxW = W - 104;
+  // 简单折行：每行约 20 字
+  const lineLen = 20;
+  const lines = [];
+  for (let i = 0; i < storyFull.length && lines.length < 3; i += lineLen) {
+    lines.push(storyFull.slice(i, i + lineLen));
+  }
+  if (storyFull.length > lineLen * 3) lines[2] = lines[2].slice(0, lineLen - 1) + '…';
+  lines.forEach((line, i) => {
+    ctx.fillText(line, 52, CONTENT_Y + i * 34);
+  });
+
+  // ── 分隔线 ────────────────────────────────────
+  const DIV_Y = CONTENT_Y + lines.length * 34 + 28;
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(64, divY); ctx.lineTo(W - 64, divY);
+  ctx.moveTo(52, DIV_Y); ctx.lineTo(W - 52, DIV_Y);
   ctx.stroke();
-  ctx.setLineDash([]);
 
-  // ── 结构化物候信息区（两列，标签+值） ────────────
-  const infoY = divY + 30;
-  const col1X = 64, col2X = W / 2 + 20;
-  const lineH = 32;
-
-  // 左列
-  const leftItems = [
-    { label: '时令', value: flower.period || '—' },
-    { label: '花期', value: bp || '—' },
-  ];
-  // 右列
+  // ── 元数据网格（双语，两列 2×2）──────────────────
+  const GRID_Y = DIV_Y + 32;
   const climate = flower.climate || (flower.period === '早春' ? '湿冷' : flower.period === '仲春' ? '温润' : '温暖');
   const origin = flower.origin || flower.native || '华东';
-  const rightItems = [
-    { label: '产地', value: origin },
-    { label: '气候', value: climate },
+  const GRID = [
+    { zh: '时令', en: 'SEASON',  val: flower.period || '—', col: 0 },
+    { zh: '产地', en: 'ORIGIN',  val: origin,                col: 1 },
+    { zh: '花期', en: 'PERIOD',  val: bp || '—',             col: 0 },
+    { zh: '气候', en: 'CLIMATE', val: climate,               col: 1 },
   ];
+  const COL_X = [52, W / 2 + 10];
+  const ROW_H = 68;
 
-  ctx.textBaseline = 'alphabetic';
-  leftItems.forEach((item, i) => {
-    const y = infoY + i * lineH;
-    // 标签
-    ctx.fillStyle = '#C2BDB6';
-    ctx.font = '300 11px monospace';
+  GRID.forEach((item, idx) => {
+    const row = Math.floor(idx / 2);
+    const x = COL_X[item.col];
+    const y = GRID_Y + row * ROW_H;
+
+    // 双语标签
+    ctx.fillStyle = '#AAAAAA';
+    ctx.font = '400 10px monospace';
+    ctx.letterSpacing = '0.18em';
     ctx.textAlign = 'left';
-    ctx.fillText(item.label, col1X, y);
-    // 细竖线
-    ctx.strokeStyle = 'rgba(180,172,162,0.3)';
-    ctx.lineWidth = 0.5;
-    ctx.setLineDash([]);
-    ctx.beginPath();
-    ctx.moveTo(col1X + 32, y - 10); ctx.lineTo(col1X + 32, y + 3);
-    ctx.stroke();
+    ctx.textBaseline = 'top';
+    ctx.fillText(`${item.zh} / ${item.en}`, x, y);
+    ctx.letterSpacing = '0';
+
     // 值
-    ctx.fillStyle = '#706860';
-    ctx.font = '300 15px "Noto Serif SC", serif';
-    ctx.fillText(item.value, col1X + 42, y);
-  });
+    ctx.fillStyle = '#1A1A1A';
+    ctx.font = '400 22px "Noto Serif SC", serif';
+    ctx.fillText(item.val, x, y + 18);
 
-  rightItems.forEach((item, i) => {
-    const y = infoY + i * lineH;
-    ctx.fillStyle = '#C2BDB6';
-    ctx.font = '300 11px monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(item.label, col2X, y);
-    ctx.strokeStyle = 'rgba(180,172,162,0.3)';
-    ctx.lineWidth = 0.5;
+    // 左侧细竖线装饰
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(col2X + 32, y - 10); ctx.lineTo(col2X + 32, y + 3);
+    ctx.moveTo(x - 1, y + 2); ctx.lineTo(x - 1, y + 46);
     ctx.stroke();
-    ctx.fillStyle = '#706860';
-    ctx.font = '300 15px "Noto Serif SC", serif';
-    ctx.fillText(item.value, col2X + 42, y);
   });
 
-  // ── 遇见虚线圆（右下角，极淡）──────────────────
-  if (date) {
-    const stampCX = W - 88, stampCY = infoY + lineH * 2 + 60;
-    ctx.save();
-    ctx.globalAlpha = 0.25;
-    ctx.strokeStyle = hexToRgbaString(flower.colorHex, 1);
-    ctx.lineWidth = 0.8;
-    ctx.setLineDash([3, 6]);
-    ctx.beginPath(); ctx.arc(stampCX, stampCY, 48, 0, Math.PI * 2); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.lineWidth = 0.4;
-    ctx.beginPath(); ctx.arc(stampCX, stampCY, 34, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = hexToRgbaString(flower.colorHex, 1);
-    ctx.font = '300 12px "Noto Serif SC", serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(date, stampCX, stampCY);
-    ctx.globalAlpha = 1;
-    ctx.restore();
-  }
+  // ── 底部：署名（左）+ 编号（右）──────────────────
+  const FOOT_Y = H - 52;
+  // 细分隔线
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(52, FOOT_Y - 16); ctx.lineTo(W - 52, FOOT_Y - 16);
+  ctx.stroke();
 
-  // ── 底部署名（左下，极细极小）────────────────────
-  const footerY = H - 36;
-  ctx.fillStyle = '#C8C3BC';
-  ctx.font = '300 12px "Noto Serif SC", serif';
+  ctx.fillStyle = '#BBBBBB';
+  ctx.font = '400 12px "Noto Serif SC", serif';
   ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillText('春天花会开', 64, footerY);
-  ctx.font = '300 10px monospace';
-  ctx.fillText('luvlua.xyz', 64, footerY + 16);
+  ctx.textBaseline = 'middle';
+  ctx.fillText('春天花会开', 52, FOOT_Y);
+  ctx.font = '400 10px monospace';
+  ctx.fillText('LUVLUA.XYZ', 52, FOOT_Y + 18);
+
+  // 右：年份印章圆
+  const stampCX = W - 72, stampCY = FOOT_Y + 8;
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.strokeStyle = '#555555';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 5]);
+  ctx.beginPath(); ctx.arc(stampCX, stampCY, 38, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineWidth = 0.6;
+  ctx.beginPath(); ctx.arc(stampCX, stampCY, 28, 0, Math.PI * 2); ctx.stroke();
+  ctx.globalAlpha = 0.35;
+  ctx.fillStyle = '#555555';
+  ctx.font = '400 13px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(new Date().getFullYear()), stampCX, stampCY);
+  ctx.globalAlpha = 1;
+  ctx.restore();
 }
 
 function hexToRgbaString(hex, alpha) {

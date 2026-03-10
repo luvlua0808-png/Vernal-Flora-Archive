@@ -1619,44 +1619,59 @@ body::before {
   height: auto;
 }
 
-/* 分享卡片底部操作行（极简文字链接风格）*/
+/* 分享卡片底部操作行 */
 .share-card-footer-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 4px 0;
+  gap: 12px;
+  padding: 14px 0 0;
   border-top: 0.5px solid var(--border);
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .share-replace-link {
-  font-size: 12px;
-  color: var(--ink-faint);
-  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+  padding: 13px 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-size: 13px;
+  color: var(--ink-light);
+  letter-spacing: 0.06em;
   font-family: 'Noto Serif SC', serif;
   cursor: pointer;
-  padding: 4px 0;
-  transition: color 200ms;
+  background: transparent;
+  transition: background 150ms;
 }
 
 .share-replace-link:active {
-  color: var(--ink-light);
+  background: var(--surface);
 }
 
 .share-save-link {
-  background: transparent;
+  flex: 1.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 0;
+  background: #1A1A1A;
   border: none;
-  font-size: 12px;
-  color: var(--ink-light);
-  letter-spacing: 0.12em;
+  border-radius: 14px;
+  font-size: 13px;
+  color: #FFFFFF;
+  letter-spacing: 0.06em;
   font-family: 'Noto Serif SC', serif;
   cursor: pointer;
-  padding: 4px 0;
-  transition: color 200ms;
+  transition: opacity 150ms;
 }
 
 .share-save-link:active {
-  color: var(--ink);
+  opacity: 0.82;
 }
 
 /* ===== ACHIEVEMENT ENTRY in collection header ===== */
