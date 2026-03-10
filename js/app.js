@@ -1018,41 +1018,93 @@ function drawStyleA(flower, photoImg) {
     ctx.fillText(date, 64, coordY + 18);
   }
 
-  // ── 引文（居中，小字，行距宽松）────────────────
-  const storyText = flower.story.slice(0, 26) + (flower.story.length > 26 ? '…' : '');
+  // ── 引文（居中，小字） ─────────────────────────
+  const storyText = flower.story.slice(0, 28) + (flower.story.length > 28 ? '…' : '');
   ctx.fillStyle = '#B0A898';
-  ctx.font = '300 18px "Noto Serif SC", serif';
+  ctx.font = '300 17px "Noto Serif SC", serif';
   ctx.textAlign = 'center';
-  ctx.fillText(storyText, W / 2, coordY + 58);
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(storyText, W / 2, coordY + 54);
 
-  // ── 极淡虚线分隔 ────────────────────────────────
-  ctx.strokeStyle = 'rgba(180,172,162,0.2)';
+  // ── 极淡虚线分隔 ──────────────────────────────
+  const divY = coordY + 80;
+  ctx.strokeStyle = 'rgba(180,172,162,0.22)';
   ctx.lineWidth = 0.5;
   ctx.setLineDash([2, 12]);
   ctx.beginPath();
-  ctx.moveTo(64, coordY + 82); ctx.lineTo(W - 64, coordY + 82);
+  ctx.moveTo(64, divY); ctx.lineTo(W - 64, divY);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // ── 遇见虚线圆（右下角，几乎不可见，仅提示）────
+  // ── 结构化物候信息区（两列，标签+值） ────────────
+  const infoY = divY + 30;
+  const col1X = 64, col2X = W / 2 + 20;
+  const lineH = 32;
+
+  // 左列
+  const leftItems = [
+    { label: '时令', value: flower.period || '—' },
+    { label: '花期', value: bp || '—' },
+  ];
+  // 右列
+  const climate = flower.climate || (flower.period === '早春' ? '湿冷' : flower.period === '仲春' ? '温润' : '温暖');
+  const origin = flower.origin || flower.native || '华东';
+  const rightItems = [
+    { label: '产地', value: origin },
+    { label: '气候', value: climate },
+  ];
+
+  ctx.textBaseline = 'alphabetic';
+  leftItems.forEach((item, i) => {
+    const y = infoY + i * lineH;
+    // 标签
+    ctx.fillStyle = '#C2BDB6';
+    ctx.font = '300 11px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(item.label, col1X, y);
+    // 细竖线
+    ctx.strokeStyle = 'rgba(180,172,162,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(col1X + 32, y - 10); ctx.lineTo(col1X + 32, y + 3);
+    ctx.stroke();
+    // 值
+    ctx.fillStyle = '#706860';
+    ctx.font = '300 15px "Noto Serif SC", serif';
+    ctx.fillText(item.value, col1X + 42, y);
+  });
+
+  rightItems.forEach((item, i) => {
+    const y = infoY + i * lineH;
+    ctx.fillStyle = '#C2BDB6';
+    ctx.font = '300 11px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(item.label, col2X, y);
+    ctx.strokeStyle = 'rgba(180,172,162,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(col2X + 32, y - 10); ctx.lineTo(col2X + 32, y + 3);
+    ctx.stroke();
+    ctx.fillStyle = '#706860';
+    ctx.font = '300 15px "Noto Serif SC", serif';
+    ctx.fillText(item.value, col2X + 42, y);
+  });
+
+  // ── 遇见虚线圆（右下角，极淡）──────────────────
   if (date) {
-    const stampCX = W - 88, stampCY = coordY + 160;
+    const stampCX = W - 88, stampCY = infoY + lineH * 2 + 60;
     ctx.save();
-    ctx.globalAlpha = 0.28;
+    ctx.globalAlpha = 0.25;
     ctx.strokeStyle = hexToRgbaString(flower.colorHex, 1);
     ctx.lineWidth = 0.8;
     ctx.setLineDash([3, 6]);
-    ctx.beginPath();
-    ctx.arc(stampCX, stampCY, 52, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(stampCX, stampCY, 48, 0, Math.PI * 2); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.strokeStyle = hexToRgbaString(flower.colorHex, 1);
     ctx.lineWidth = 0.4;
-    ctx.beginPath();
-    ctx.arc(stampCX, stampCY, 38, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(stampCX, stampCY, 34, 0, Math.PI * 2); ctx.stroke();
     ctx.fillStyle = hexToRgbaString(flower.colorHex, 1);
-    ctx.font = '300 13px "Noto Serif SC", serif';
+    ctx.font = '300 12px "Noto Serif SC", serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(date, stampCX, stampCY);
@@ -1060,7 +1112,7 @@ function drawStyleA(flower, photoImg) {
     ctx.restore();
   }
 
-  // ── 底部署名（左下，极细极小）───────────────────
+  // ── 底部署名（左下，极细极小）────────────────────
   const footerY = H - 36;
   ctx.fillStyle = '#C8C3BC';
   ctx.font = '300 12px "Noto Serif SC", serif';
@@ -1068,7 +1120,7 @@ function drawStyleA(flower, photoImg) {
   ctx.textBaseline = 'alphabetic';
   ctx.fillText('春天花会开', 64, footerY);
   ctx.font = '300 10px monospace';
-  ctx.fillText('vernal-flora-archive.netlify.app', 64, footerY + 16);
+  ctx.fillText('luvlua.xyz', 64, footerY + 16);
 }
 
 function hexToRgbaString(hex, alpha) {
