@@ -138,6 +138,13 @@ body::before {
   margin-bottom: 32px;
 }
 
+.hero-logo-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(192,57,43,0.12));
+}
+
 .hero-title {
   font-size: 32px;
   font-weight: 600;
