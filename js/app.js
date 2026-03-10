@@ -234,7 +234,7 @@ function navigateTo(page) {
 // ===== HOME PAGE =====
 function renderHomePage() {
   const heroWrap = document.getElementById('hero-svg-wrap');
-  if (heroWrap) heroWrap.innerHTML = '<img src="icons/icon-logo.png" alt="春天花会开" class="hero-logo-img">';
+  if (heroWrap) heroWrap.innerHTML = '<img src="icons/icon-logo-orig.png" alt="春天花会开" class="hero-logo-img">';
 
   renderHomeFlowerList();
 }
