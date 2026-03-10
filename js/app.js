@@ -408,7 +408,15 @@ function checkInFlower(id) {
     }
   }
 
-  showToast(isNew ? `${FLOWERS_DATA.find(f=>f.id===id)?.name} 已加入标本墙` : '已在标本墙中');
+  const flowerName = FLOWERS_DATA.find(f=>f.id===id)?.name;
+  showToast(isNew ? `${flowerName} 已加入标本墙` : '已在标本墙中');
+
+  if (isNew) {
+    setTimeout(() => {
+      navigateTo('collection');
+      setTimeout(() => openSpecimenDetail(id), 300);
+    }, 900);
+  }
 }
 
 // ===== COLLECTION WALL =====
