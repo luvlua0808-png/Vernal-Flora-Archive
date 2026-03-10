@@ -728,6 +728,38 @@ function showToast(message) {
   }, 2000);
 }
 
+// ===== PRIVACY NOTICE =====
+function showPrivacyNotice() {
+  let overlay = document.getElementById('privacy-sheet-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'privacy-sheet-overlay';
+    overlay.className = 'privacy-sheet-overlay';
+    overlay.innerHTML = `
+      <div class="privacy-sheet">
+        <div class="privacy-sheet-title">隐私说明</div>
+        <div class="privacy-sheet-body">
+          <p>本应用使用 <strong>Umami</strong> 进行匿名访问统计，目的是了解花卉展示内容的受欢迎程度，以优化展示逻辑。</p>
+          <p><strong>我们承诺：</strong>统计过程<strong>不使用 Cookie</strong>，不收集姓名、邮箱等任何个人身份信息，不跨站追踪用户行为。</p>
+          <p>若您的浏览器已开启 <strong>Do Not Track</strong> 设置，Umami 将自动尊重该设置并停止统计。</p>
+          <p style="color:var(--ink-faint);font-size:11px">数据托管于 Umami Cloud，仅供本项目作者查阅。</p>
+        </div>
+        <button class="privacy-sheet-close" onclick="closePrivacyNotice()">我知道了</button>
+      </div>
+    `;
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closePrivacyNotice();
+    });
+    document.body.appendChild(overlay);
+  }
+  requestAnimationFrame(() => overlay.classList.add('active'));
+}
+
+function closePrivacyNotice() {
+  const overlay = document.getElementById('privacy-sheet-overlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
 // ===== LOADING SCREEN =====
 function hideLoading() {
   const loading = document.getElementById('loading-screen');
@@ -761,6 +793,15 @@ function init() {
   if (overlay) {
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeModal();
+    });
+  }
+
+  // Privacy notice link
+  const privacyLink = document.getElementById('privacy-link');
+  if (privacyLink) {
+    privacyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPrivacyNotice();
     });
   }
 
