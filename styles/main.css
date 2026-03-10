@@ -1674,6 +1674,166 @@ body::before {
   opacity: 0.82;
 }
 
+/* ===== 采集者姓名组件 ===== */
+.collector-widget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 0 24px;
+}
+
+.collector-label {
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.12em;
+  font-family: 'Noto Serif SC', serif;
+}
+
+.collector-name {
+  font-size: 14px;
+  color: var(--ink-light);
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 0.08em;
+}
+
+.collector-edit-btn {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.1em;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background 150ms;
+}
+
+.collector-edit-btn:active {
+  background: var(--surface);
+}
+
+.collector-set-btn {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: 0.1em;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 0.5px dashed var(--border);
+  border-radius: 20px;
+  transition: border-color 200ms, color 200ms;
+}
+
+.collector-set-btn:active {
+  color: var(--ink-light);
+  border-color: var(--ink-faint);
+}
+
+/* 采集者编辑弹层 */
+.collector-edit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1100;
+  transition: background 280ms;
+}
+
+.collector-edit-overlay.active {
+  background: rgba(0,0,0,0.32);
+}
+
+.collector-edit-sheet {
+  width: 100%;
+  background: var(--bg);
+  border-radius: 20px 20px 0 0;
+  padding: 28px 24px 40px;
+  transform: translateY(100%);
+  transition: transform 280ms cubic-bezier(0.22,1,0.36,1);
+}
+
+.collector-edit-overlay.active .collector-edit-sheet {
+  transform: translateY(0);
+}
+
+.collector-edit-title {
+  font-size: 16px;
+  color: var(--ink);
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+
+.collector-edit-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 16px;
+  color: var(--ink);
+  font-family: 'Noto Serif SC', serif;
+  outline: none;
+  letter-spacing: 0.05em;
+  transition: border-color 200ms;
+}
+
+.collector-edit-input:focus {
+  border-color: var(--ink-light);
+}
+
+.collector-edit-hint {
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+  font-family: 'Noto Serif SC', serif;
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+.collector-edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.collector-cancel-btn {
+  flex: 1;
+  padding: 13px 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--ink-light);
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.collector-confirm-btn {
+  flex: 1.8;
+  padding: 13px 0;
+  background: #1A1A1A;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #FFFFFF;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: opacity 150ms;
+}
+
+.collector-confirm-btn:active {
+  opacity: 0.82;
+}
+
 /* ===== ACHIEVEMENT ENTRY in collection header ===== */
 .ach-entry-btn {
   display: flex;

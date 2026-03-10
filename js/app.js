@@ -64,6 +64,17 @@ function getUnlockDate(id) {
   return STATE.unlockedFlowers[id] || null;
 }
 
+// ── 采集者姓名 ────────────────────────────────────────
+const COLLECTOR_KEY = 'chunTianHuaHuiKai_collector';
+
+function getCollectorName() {
+  try { return localStorage.getItem(COLLECTOR_KEY) || ''; } catch(e) { return ''; }
+}
+
+function setCollectorName(name) {
+  try { localStorage.setItem(COLLECTOR_KEY, name.trim()); } catch(e) {}
+}
+
 // ===== ACHIEVEMENTS =====
 const ACH_KEY = 'chunTianHuaHuiKai_achievements_v1';
 
@@ -235,6 +246,71 @@ function navigateTo(page) {
 function renderHomePage() {
   const heroWrap = document.getElementById('hero-svg-wrap');
   if (heroWrap) heroWrap.innerHTML = '<img src="icons/icon-logo.png" alt="春天花会开" class="hero-logo-img">';
+
+  renderCollectorWidget();
+}
+
+function renderCollectorWidget() {
+  const existing = document.getElementById('collector-widget');
+  if (existing) existing.remove();
+
+  const name = getCollectorName();
+  const widget = document.createElement('div');
+  widget.id = 'collector-widget';
+  widget.className = 'collector-widget';
+
+  if (name) {
+    widget.innerHTML = `
+      <span class="collector-label">采集者</span>
+      <span class="collector-name" id="collector-display">${name}</span>
+      <button class="collector-edit-btn" onclick="openCollectorEdit()">编辑</button>
+    `;
+  } else {
+    widget.innerHTML = `
+      <button class="collector-set-btn" onclick="openCollectorEdit()">+ 设置采集者姓名</button>
+    `;
+  }
+
+  // 插入到首页 hero CTA 下方
+  const heroCta = document.querySelector('#page-home .hero-cta');
+  if (heroCta) heroCta.after(widget);
+}
+
+function openCollectorEdit() {
+  const current = getCollectorName();
+  const overlay = document.createElement('div');
+  overlay.id = 'collector-edit-overlay';
+  overlay.className = 'collector-edit-overlay';
+  overlay.innerHTML = `
+    <div class="collector-edit-sheet">
+      <div class="collector-edit-title">采集者姓名</div>
+      <input class="collector-edit-input" id="collector-input" type="text"
+        placeholder="你的名字或昵称" value="${current}" maxlength="20" autocomplete="off">
+      <div class="collector-edit-hint">将显示在分享卡片上，留空则不显示</div>
+      <div class="collector-edit-actions">
+        <button class="collector-cancel-btn" onclick="closeCollectorEdit()">取消</button>
+        <button class="collector-confirm-btn" onclick="saveCollectorEdit()">确认</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('active'));
+  setTimeout(() => document.getElementById('collector-input')?.focus(), 300);
+}
+
+function closeCollectorEdit() {
+  const overlay = document.getElementById('collector-edit-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => overlay.remove(), 280);
+  }
+}
+
+function saveCollectorEdit() {
+  const input = document.getElementById('collector-input');
+  if (input) setCollectorName(input.value);
+  closeCollectorEdit();
+  setTimeout(() => renderCollectorWidget(), 300);
 }
 
 // ===== QUIZ =====
@@ -963,13 +1039,21 @@ function drawStyleA(flower, photoImg) {
   ctx.fillText(flower.period || '', W - 52, PHOTO_BOTTOM - 8);
   ctx.letterSpacing = '0';
 
-  // 左下：坐标 + 日期（monospace，图标感小文字）
+  // 左下：坐标 + 日期（monospace）
   ctx.fillStyle = 'rgba(60,60,60,0.7)';
   ctx.font = '400 13px monospace';
   ctx.textAlign = 'left';
   ctx.fillText('⊙ 31°14′N  121°28′E', 52, PHOTO_BOTTOM - 46);
   if (date) {
     ctx.fillText(`⊡ ${date}`, 52, PHOTO_BOTTOM - 26);
+  }
+
+  // 采集者姓名（极小极淡，不抢主体）
+  const collectorName = getCollectorName();
+  if (collectorName) {
+    ctx.fillStyle = 'rgba(60,60,60,0.45)';
+    ctx.font = '400 11px monospace';
+    ctx.fillText(`Collector: ${collectorName}`, 52, PHOTO_BOTTOM - 6);
   }
 
   // ── 白色内容区（图片下方）──────────────────────
@@ -1102,6 +1186,9 @@ window.openShareCard = openShareCard;
 window.closeShareCard = closeShareCard;
 window.replaceSharePhoto = replaceSharePhoto;
 window.downloadShareCard = downloadShareCard;
+window.openCollectorEdit = openCollectorEdit;
+window.closeCollectorEdit = closeCollectorEdit;
+window.saveCollectorEdit = saveCollectorEdit;
 
 // ===== TOAST =====
 function showToast(message) {
