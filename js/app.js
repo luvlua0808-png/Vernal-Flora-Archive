@@ -801,7 +801,7 @@ function openShareCard(flowerId) {
       <div class="share-card-footer-actions">
         <label class="share-replace-link">
           <input type="file" accept="image/*" id="share-photo-input" style="display:none" onchange="replaceSharePhoto(${flowerId}, this)">
-          → 采摘另一朵
+          替换本地照片
         </label>
         <button class="share-save-link" onclick="downloadShareCard()">保存到相册</button>
       </div>
@@ -905,12 +905,11 @@ function drawStyleA(flower, photoImg) {
   ctx.moveTo(64, 52); ctx.lineTo(W - 64, 52);
   ctx.stroke();
 
-  // ── 花卉图片（占卡片宽度 88%，居中，水墨晕染融入背景）──
-  const PW = Math.round(W * 0.88), PH = Math.round(PW * 0.72);
-  const px = (W - PW) / 2, py = 70;
+  // ── 花卉图片（100% 通栏，底部 mask 消隐，无左右边距）──
+  const PW = W, PH = Math.round(W * 0.72);
+  const px = 0, py = 52;
 
   if (photoImg) {
-    // 高质量渲染
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
@@ -918,85 +917,105 @@ function drawStyleA(flower, photoImg) {
     ctx.beginPath();
     ctx.rect(px, py, PW, PH);
     ctx.clip();
+    // cover 模式：保持原始宽高比，不拉伸
     const sc = Math.max(PW / photoImg.width, PH / photoImg.height);
-    const sw = PW / sc, sh = PH / sc;
-    const sx = (photoImg.width - sw) / 2, sy = (photoImg.height - sh) / 2;
-    ctx.drawImage(photoImg, sx, sy, sw, sh, px, py, PW, PH);
+    const dw = photoImg.width * sc, dh = photoImg.height * sc;
+    const dx = (PW - dw) / 2, dy = py + (PH - dh) / 2;
+    ctx.drawImage(photoImg, dx, dy, dw, dh);
     ctx.restore();
 
-    // 悬浮柔光阴影（底部弥散）
-    const shadowGrad = ctx.createLinearGradient(0, py + PH - 30, 0, py + PH + 60);
-    shadowGrad.addColorStop(0, 'rgba(0,0,0,0.08)');
-    shadowGrad.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = shadowGrad;
-    ctx.fillRect(px - 20, py + PH - 30, PW + 40, 90);
+    // 底部强力渐隐（消隐高度约 45% 图片高）
+    const fadeH = Math.round(PH * 0.45);
+    const bottomFade = ctx.createLinearGradient(0, py + PH - fadeH, 0, py + PH);
+    bottomFade.addColorStop(0, 'rgba(249,248,244,0)');
+    bottomFade.addColorStop(0.55, 'rgba(249,248,244,0.72)');
+    bottomFade.addColorStop(1, BG);
+    ctx.fillStyle = bottomFade;
+    ctx.fillRect(0, py + PH - fadeH, W, fadeH);
 
-    // 四边水墨晕染（mask 效果，将图片边缘渐隐为背景色）
-    const fadeW = 55;
-    [
-      { grad: ctx.createLinearGradient(px, py, px + fadeW, py), rect: [px, py, fadeW, PH] },
-      { grad: ctx.createLinearGradient(px + PW, py, px + PW - fadeW, py), rect: [px + PW - fadeW, py, fadeW, PH] },
-      { grad: ctx.createLinearGradient(px, py, px, py + fadeW), rect: [px, py, PW, fadeW] },
-      { grad: ctx.createLinearGradient(px, py + PH, px, py + PH - fadeW * 1.4), rect: [px, py + PH - fadeW * 1.4, PW, fadeW * 1.4] },
-    ].forEach(({ grad, rect }) => {
-      grad.addColorStop(0, BG);
-      grad.addColorStop(1, 'rgba(249,248,244,0)');
+    // 左右侧极淡消隐（保留通栏感）
+    const sideW = 30;
+    [0, W - sideW].forEach(x => {
+      const sg = x === 0
+        ? ctx.createLinearGradient(0, py, sideW, py)
+        : ctx.createLinearGradient(W, py, W - sideW, py);
+      sg.addColorStop(0, 'rgba(249,248,244,0.55)');
+      sg.addColorStop(1, 'rgba(249,248,244,0)');
       ctx.save();
       ctx.rect(px, py, PW, PH);
       ctx.clip();
-      ctx.fillStyle = grad;
-      ctx.fillRect(...rect);
+      ctx.fillStyle = sg;
+      ctx.fillRect(x, py, sideW, PH);
       ctx.restore();
     });
 
+    // 顶部极淡消隐
+    const topFade = ctx.createLinearGradient(0, py, 0, py + 40);
+    topFade.addColorStop(0, 'rgba(249,248,244,0.6)');
+    topFade.addColorStop(1, 'rgba(249,248,244,0)');
+    ctx.save();
+    ctx.rect(0, py, W, 40);
+    ctx.clip();
+    ctx.fillStyle = topFade;
+    ctx.fillRect(0, py, W, 40);
+    ctx.restore();
+
   } else {
-    // 无图：极淡花色圆形占位
-    const cg = ctx.createRadialGradient(W / 2, py + PH / 2, 0, W / 2, py + PH / 2, PH * 0.55);
-    cg.addColorStop(0, hexToRgbaString(flower.colorHex, 0.1));
+    const cg = ctx.createRadialGradient(W / 2, py + PH / 2, 0, W / 2, py + PH / 2, PH * 0.6);
+    cg.addColorStop(0, hexToRgbaString(flower.colorHex, 0.09));
     cg.addColorStop(1, 'rgba(249,248,244,0)');
     ctx.fillStyle = cg;
-    ctx.fillRect(px, py, PW, PH);
+    ctx.fillRect(0, py, W, PH);
   }
 
-  // ── 文字区：整体压低到右下方，上方大留白 ────────
-  const textBaseY = py + PH + 48;
+  // ── 花名向上层叠在图片消隐区，制造层叠感 ────────
+  // 图片底部约 py+PH，花名向上偏移 ~80px（负值层叠）
+  const textBaseY = py + PH - 30;
 
-  // 花名（极细衬线，手动大字间距）
+  // 花名（极细衬线，字间距 0.3em，右对齐，带轻微底部半透明遮罩防止图字混）
+  // 先画一层极淡底色衬底保证可读
+  ctx.save();
+  const nameBgH = 110;
+  const nameBg = ctx.createLinearGradient(0, textBaseY - nameBgH, 0, textBaseY + 10);
+  nameBg.addColorStop(0, 'rgba(249,248,244,0)');
+  nameBg.addColorStop(1, 'rgba(249,248,244,0.55)');
+  ctx.fillStyle = nameBg;
+  ctx.fillRect(0, textBaseY - nameBgH, W, nameBgH + 10);
+  ctx.restore();
+
   ctx.fillStyle = '#2A2C30';
-  ctx.font = '300 64px "Noto Serif SC", serif';
+  ctx.font = '300 58px "Noto Serif SC", serif';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'alphabetic';
   const chars = flower.name.split('');
-  const charW = 64 * 0.72, charGap = 16;
-  const totalW = chars.length * charW + (chars.length - 1) * charGap;
+  const charW = 58 * 0.72, charGap = Math.round(58 * 0.3); // 0.3em 字间距
   let cx2 = W - 64 + charW / 2;
-  // 从右往左绘，实现右对齐字间距
   for (let i = chars.length - 1; i >= 0; i--) {
     ctx.fillText(chars[i], cx2, textBaseY);
     cx2 -= charW + charGap;
   }
 
-  // 别名（右对齐，极淡灰）
+  // 别名（右对齐）
   if (flower.alias) {
-    ctx.fillStyle = '#A8A298';
-    ctx.font = '300 20px "Noto Serif SC", serif';
-    ctx.fillText(flower.alias.split('、')[0], W - 64, textBaseY + 36);
+    ctx.fillStyle = '#A0998F';
+    ctx.font = '300 19px "Noto Serif SC", serif';
+    ctx.fillText(flower.alias.split('、')[0], W - 64, textBaseY + 34);
   }
 
-  // 时令·花期（花色细字）
+  // 时令·花期
   const periodColor = { '早春': '#A88018', '仲春': '#904060', '暮春': '#783048' };
   ctx.fillStyle = periodColor[flower.period] || '#887060';
-  ctx.font = '300 16px "Noto Serif SC", serif';
-  ctx.fillText(`${flower.period}  ·  ${bp}`, W - 64, textBaseY + (flower.alias ? 70 : 48));
+  ctx.font = '300 15px "Noto Serif SC", serif';
+  ctx.fillText(`${flower.period}  ·  ${bp}`, W - 64, textBaseY + (flower.alias ? 62 : 40));
 
-  // ── 经纬坐标（左下，精确标本记录感）────────────
-  const coordY = textBaseY + 90;
+  // ── 经纬坐标（左侧，与花名同区） ────────────────
+  const coordY = textBaseY + 30;
   ctx.fillStyle = '#B8B2AA';
-  ctx.font = '300 13px monospace';
+  ctx.font = '300 12px monospace';
   ctx.textAlign = 'left';
   ctx.fillText('31°14′N  121°28′E', 64, coordY);
   if (date) {
-    ctx.fillText(date, 64, coordY + 20);
+    ctx.fillText(date, 64, coordY + 18);
   }
 
   // ── 引文（居中，小字，行距宽松）────────────────
