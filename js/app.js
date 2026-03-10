@@ -913,10 +913,43 @@ function replaceSharePhoto(flowerId, input) {
 function downloadShareCard() {
   const canvas = document.getElementById('share-canvas');
   if (!canvas) return;
-  const a = document.createElement('a');
-  a.download = '春天花会开.png';
-  a.href = canvas.toDataURL('image/png');
-  a.click();
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  if (isIOS) {
+    // iOS Safari 不支持 a[download]，在新标签页打开图片，用户长按即可保存
+    const dataUrl = canvas.toDataURL('image/png');
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <title>春天花会开 · 分享卡片</title>
+            <style>
+              body{margin:0;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px}
+              img{max-width:100%;border-radius:12px}
+              p{color:#aaa;font-size:13px;font-family:sans-serif;letter-spacing:.05em;text-align:center;padding:0 24px}
+            </style>
+          </head>
+          <body>
+            <img src="${dataUrl}" alt="分享卡片">
+            <p>长按图片 → 存储到「照片」</p>
+          </body>
+        </html>
+      `);
+      win.document.close();
+    } else {
+      // 弹窗被拦截时 fallback：showToast 提示
+      showToast('请长按卡片图片保存');
+    }
+  } else {
+    const a = document.createElement('a');
+    a.download = '春天花会开.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  }
 }
 
 function loadSharePhoto(flowerId, customDataUrl) {
