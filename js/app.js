@@ -810,3 +810,6 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+window.showPrivacyNotice = showPrivacyNotice;
+window.closePrivacyNotice = closePrivacyNotice;
