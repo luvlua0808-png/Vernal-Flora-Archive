@@ -1581,33 +1581,6 @@ body::before {
   transform: translateY(0);
 }
 
-/* 风格切换 tab */
-.share-style-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.share-style-tab {
-  flex: 1;
-  padding: 8px 0;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 12px;
-  color: var(--ink-faint);
-  letter-spacing: 0.12em;
-  font-family: 'Noto Serif SC', serif;
-  cursor: pointer;
-  transition: all 200ms ease;
-}
-
-.share-style-tab.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
 .share-card-header {
   display: flex;
   align-items: center;
@@ -1646,53 +1619,44 @@ body::before {
   height: auto;
 }
 
-.share-card-actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.btn-share-replace {
-  flex: 1;
+/* 分享卡片底部操作行（极简文字链接风格）*/
+.share-card-footer-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  font-size: 13px;
-  color: var(--ink-light);
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  font-family: 'Noto Serif SC', serif;
+  justify-content: space-between;
+  padding: 10px 4px 0;
+  border-top: 0.5px solid var(--border);
+  margin-top: 4px;
 }
 
-.btn-share-replace:active {
-  background: var(--surface);
-}
-
-.btn-share-download {
-  flex: 1;
-  padding: 12px;
-  background: var(--accent);
-  border: none;
-  border-radius: 10px;
-  font-size: 13px;
-  color: #fff;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  font-family: 'Noto Serif SC', serif;
-}
-
-.btn-share-download:active {
-  opacity: 0.85;
-}
-
-.share-card-hint {
-  font-size: 11px;
+.share-replace-link {
+  font-size: 12px;
   color: var(--ink-faint);
-  text-align: center;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 200ms;
+}
+
+.share-replace-link:active {
+  color: var(--ink-light);
+}
+
+.share-save-link {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: var(--ink-light);
+  letter-spacing: 0.12em;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 200ms;
+}
+
+.share-save-link:active {
+  color: var(--ink);
 }
 
 /* ===== ACHIEVEMENT ENTRY in collection header ===== */
