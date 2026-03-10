@@ -540,12 +540,7 @@ function openSpecimenDetail(id) {
   const flower = findFlowerById(id);
   if (!flower) return;
   track('flower_detail_view', { flower_id: id, flower_name: flower.name, unlocked: isUnlocked(id) });
-  const sourceEl = document.querySelector(`.specimen-cell[data-id="${id}"]`);
-  if (sourceEl) {
-    playFlipTransition(sourceEl, () => openModal(flower));
-  } else {
-    openModal(flower);
-  }
+  openModal(flower);
 }
 
 function openModal(flower) {
